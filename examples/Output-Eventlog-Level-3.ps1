@@ -15,7 +15,7 @@ $DataDir  = $Directories[0].FullName
 $MonthDir = $Directories[1].FullName
 $LogDir   = $Directories[2].FullName
 
-Remove-PastFiles -Path $DataDir, $LogDir -Day 365 -Recurse
+Remove-PastFiles -Path $DataDir, $LogDir -Day 365 -Recurse -Property CreationTime
 
 Start-Transcript -Path "${LogDir}\$((Get-Date).ToString("yyyyMMddHHmmss")).log" -Force | Out-Null
 
