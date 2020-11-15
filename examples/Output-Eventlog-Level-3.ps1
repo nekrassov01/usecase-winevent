@@ -11,9 +11,9 @@ $Directories = @(
 
 $Directories = New-FolderConstruction -Path $Directories -Root $PSScriptRoot
 
-$DataDir = $Directories[0].FullName
+$DataDir  = $Directories[0].FullName
 $MonthDir = $Directories[1].FullName
-$LogDir = $Directories[2].FullName
+$LogDir   = $Directories[2].FullName
 
 Remove-PastFiles -Path $DataDir, $LogDir -Day 365 -Recurse
 
@@ -22,7 +22,7 @@ Start-Transcript -Path "${LogDir}\$((Get-Date).ToString("yyyyMMddHHmmss")).log" 
 $Json = Get-Content -Path ".\params.json"
 $Params = @()
 ($Json | ConvertFrom-Json).Params | ForEach-Object -Process {
-    $Serializer = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+    $Serializer = New-Object -TypeName System.Web.Script.Serialization.JavaScriptSerializer
     $Hashtable = $Serializer.Deserialize(($_ | ConvertTo-Json), [System.Collections.Hashtable])
     $Params += $Hashtable
 }
@@ -63,7 +63,7 @@ $Params | ForEach-Object -Process {
     }
 }
 
-$Result | Export-Csv -Path "${MonthDir}\all.csv" -Encoding Default -Force -NoTypeInformation
+$Result | Export-Csv -Path "${MonthDir}\eventlog.csv" -Encoding Default -Force -NoTypeInformation
 
 Pop-Location
 Stop-Transcript | Out-Null
