@@ -15,32 +15,32 @@ $DataDir  = $Directories[0].FullName
 $MonthDir = $Directories[1].FullName
 $LogDir   = $Directories[2].FullName
 
-Remove-PastFiles -Path $DataDir, $LogDir -Day 365 -Property CreationTime
+Remove-PastItem -Path $DataDir, $LogDir -Day 365 -Property CreationTime
 
 Start-Transcript -Path "${LogDir}\$((Get-Date).ToString("yyyyMMddHHmmss")).log" -Force | Out-Null
 
 $Params = @(
     @{
-        ComputerName = "remotehost-1"
+        ComputerName = "remotehost1"
         LogName      = "System", "Application"
         Level        = 1,2,3
         Recently     = 24
     }
     @{
-        ComputerName = "remotehost-1"
+        ComputerName = "remotehost1"
         LogName      = "Security"
         Level        = 0
         Recently     = 24
         EventId      = 4625
     }
     @{
-        ComputerName = "remotehost-2"
+        ComputerName = "remotehost2"
         LogName      = "System", "Application"
         Level        = 1,2,3
         Recently     = 24
     }
     @{
-        ComputerName = "remotehost-2"
+        ComputerName = "remotehost2"
         LogName      = "Security"
         Level        = 0
         Recently     = 24
@@ -59,11 +59,11 @@ $Params | ForEach-Object -Process {
         $Output = Dump-Eventlog @_ -ErrorAction SilentlyContinue
         $Output = $Output | Sort-Object -Property LogName, LevelId, Date, Time
         $Result += $Output
-        Out-Log "Done: $($_.ComputerName)"
+        Out-Log "Done: $($_.ComputerName) - $($_.LogName -join ", ")"
     }
     Else
     {
-        Out-Log "No Reachable: $($_.ComputerName)"
+        Out-Log "No Reachable: $($_.ComputerName) - $($_.LogName -join ", ")"
     }
 }
 

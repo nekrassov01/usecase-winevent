@@ -1,26 +1,26 @@
 {
     "Params": [
         {
-            "ComputerName": "remotehost-1",
+            "ComputerName": "remotehost1",
             "LogName": ["System", "Application"],
             "Level": ["1", "2", "3"],
             "Recently": "24"
         },
         {
-            "ComputerName": "remotehost-1",
+            "ComputerName": "remotehost1",
             "LogName": ["Security"],
             "Level": ["0"],
             "Recently": "24",
             "EventId": ["4625"]
         },
         {
-            "ComputerName": "remotehost-2",
+            "ComputerName": "remotehost2",
             "LogName": ["System", "Application"],
             "Level": ["1", "2", "3"],
             "Recently": "24"
         },
         {
-            "ComputerName": "remotehost-2",
+            "ComputerName": "remotehost2",
             "LogName": ["Security"],
             "Level": ["0"],
             "Recently": "24",
