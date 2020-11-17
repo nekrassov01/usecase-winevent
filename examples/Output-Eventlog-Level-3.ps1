@@ -5,7 +5,7 @@ Get-ChildItem -Path $FunctionsDir | ForEach-Object -Process { .$_.FullName }
 
 $Directories = @(
     "data"
-    "data\$((Get-Date).ToString("yyyy-MM-dd"))-Level-3"
+    "data\$((Get-Date).ToString("yyyy-MM-dd"))"
     "log"
 )
 
@@ -15,9 +15,9 @@ $DataDir  = $Directories[0].FullName
 $MonthDir = $Directories[1].FullName
 $LogDir   = $Directories[2].FullName
 
-Remove-PastItem -Path $DataDir, $LogDir -Day 365 -Property CreationTime
-
 Start-Transcript -Path "${LogDir}\$((Get-Date).ToString("yyyyMMddHHmmss")).log" -Force | Out-Null
+
+Remove-PastItem -Path $DataDir, $LogDir -Day 365 -Property CreationTime
 
 $Json = Get-Content -Path ".\params.json"
 $Params = @()
@@ -37,29 +37,29 @@ $Params | ForEach-Object -Process {
     $Recently     = $_.Recently
     $EventId      = $_.EventId
 
-    $Ping = Test-Connection -ComputerName $ComputerName -Quiet
+    $LogName | ForEach-Object -Process {
+        
+        $Params = @{
+            ComputerName = $ComputerName
+            LogName      = $_
+            Level        = $Level
+            Recently     = $Recently
+            EventId      = $EventId
+        }
 
-    If($Ping)
-    {
-        $LogName | ForEach-Object -Process {
-            
-            $Params = @{
-                ComputerName = $ComputerName
-                LogName      = $_
-                Level        = $Level
-                Recently     = $Recently
-                EventId      = $EventId
-            }
+        $Ping = Test-Connection -ComputerName $ComputerName -Quiet
 
-            $Output = Dump-Eventlog @Params -ErrorAction SilentlyContinue
+        If($Ping)
+        {
+            $Output = Backup-Eventlog @Params -ErrorAction SilentlyContinue
             $Output | Export-Csv -Path "${MonthDir}\${ComputerName}.${_}.csv" -Encoding Default -Force -NoTypeInformation
             $Result += $Output
             Out-Log "Done: ${ComputerName} - ${_}"
         }
-    }
-    Else
-    {
-        Out-Log "No Reachable: ${ComputerName}"
+        Else
+        {
+            Out-Log "No Reachable: ${ComputerName} - ${_}"
+        }
     }
 }
 

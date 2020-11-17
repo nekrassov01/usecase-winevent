@@ -5,7 +5,7 @@ Get-ChildItem -Path $FunctionsDir | ForEach-Object -Process { .$_.FullName }
 
 $Directories = @(
     "data"
-    "data\$((Get-Date).ToString("yyyy-MM-dd"))-Level-2"
+    "data\$((Get-Date).ToString("yyyy-MM-dd"))"
     "log"
 )
 
@@ -15,9 +15,9 @@ $DataDir  = $Directories[0].FullName
 $MonthDir = $Directories[1].FullName
 $LogDir   = $Directories[2].FullName
 
-Remove-PastItem -Path $DataDir, $LogDir -Day 365 -Property CreationTime
-
 Start-Transcript -Path "${LogDir}\$((Get-Date).ToString("yyyyMMddHHmmss")).log" -Force | Out-Null
+
+Remove-PastItem -Path $DataDir, $LogDir -Day 365 -Property CreationTime
 
 $Json = Get-Content -Path ".\params.json"
 $Params = @()
@@ -35,7 +35,7 @@ $Params | ForEach-Object -Process {
 
     If($Ping)
     {
-        $Output = Dump-Eventlog @_ -ErrorAction SilentlyContinue
+        $Output = Backup-Eventlog @_ -ErrorAction SilentlyContinue
         $Output = $Output | Sort-Object -Property LogName, LevelId, Date, Time
         $Result += $Output
         Out-Log "Done: $($_.ComputerName) - $($_.LogName -join ", ")"
